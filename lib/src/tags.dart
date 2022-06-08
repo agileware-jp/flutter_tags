@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../flutter_tags.dart';
 import 'util/custom_wrap.dart';
-import 'package:flutter_tags/src/suggestions_textfield.dart';
 
 ///ItemBuilder
 typedef Widget ItemBuilder(int index);
@@ -25,11 +24,6 @@ class Tags extends StatefulWidget {
       this.textField,
       Key? key})
       : assert(itemCount >= 0),
-        assert(alignment != null),
-        assert(runAlignment != null),
-        assert(direction != null),
-        assert(verticalDirection != null),
-        assert(textDirection != null),
         super(key: key);
 
   ///specific number of columns
@@ -87,13 +81,13 @@ class TagsState extends State<Tags> {
   Orientation _orientation = Orientation.portrait;
   double _width = 0;
 
-  final List<DataList> _list = [];
+  final List<DataList?> _list = [];
 
-  List<Item> get getAllItem => _list.toList();
+  List<Item?> get getAllItem => _list.toList();
 
   //get the current width of the screen
   void _getWidthContext() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final keyContext = _containerKey.currentContext;
       if (keyContext != null) {
         final RenderBox box = keyContext.findRenderObject() as RenderBox;
@@ -164,11 +158,11 @@ class TagsState extends State<Tags> {
               tagsTextField: widget.textField!,
               onSubmitted: (String str) {
                 if (!widget.textField!.duplicates) {
-                  final List<DataList> lst =
+                  final List<DataList?> lst =
                       _list.where((l) => l != null && l.title == str).toList();
 
                   if (lst.isNotEmpty) {
-                    lst.forEach((d) => d.showDuplicate = true);
+                    lst.forEach((d) => d!.showDuplicate = true);
                     return;
                   }
                 }
@@ -240,7 +234,7 @@ class DataListInherited extends InheritedWidget {
       required Widget child})
       : super(key: key, child: child);
 
-  final List<DataList>? list;
+  final List<DataList?>? list;
   final bool? symmetry;
   final int? itemCount;
 
@@ -279,6 +273,7 @@ class DataList extends ValueNotifier implements Item {
   }
 
   bool _showDuplicate = false;
+
   set showDuplicate(bool a) {
     _showDuplicate = a;
     // rebuild only the specific Item that changes its value
@@ -287,6 +282,7 @@ class DataList extends ValueNotifier implements Item {
 
   bool get active => _active;
   bool _active = false;
+
   set active(bool a) {
     _active = a;
     // rebuild only the specific Item that changes its value
